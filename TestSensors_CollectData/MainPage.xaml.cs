@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using System.Text;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 using Windows.Devices.Gpio;
 using Windows.Devices.I2c;
@@ -43,9 +44,15 @@ namespace TestSensors_CollectData
 
         Bmp180Sensor _bmp180;
 
+        Stopwatch timer;
+
         public MainPage()
         {
             this.InitializeComponent();
+
+            Debug.WriteLine("test");
+
+            timer = new Stopwatch();
         }
 
         public double pDiffToFlow(double pDiff)
@@ -55,12 +62,38 @@ namespace TestSensors_CollectData
             return (Math.Pow(k * pDiff, 0.5));
         }
 
-        private void StartStopButton_Click(object sender, RoutedEventArgs e)
+        private async void StartStopButton_Click(object sender, RoutedEventArgs e)
         {
             StartStopButton.Content = "Stop";
 
             InitPressure();
 
+            //getValues();
+
+            await InitADS();
+
+            timer.Start();
+
+            while (true)
+            {
+                if (timer.ElapsedMilliseconds > 2000)
+                {
+                    var byteArray = new byte[2];
+
+                    _converter0.WriteRead(new byte[] { 0x0 }, byteArray);
+
+                    if (BitConverter.IsLittleEndian) { Array.Reverse(byteArray); }
+
+                    var value = BitConverter.ToInt16(byteArray, 0);
+
+                    Debug.WriteLine(byteArray[0].ToString());
+                    Debug.WriteLine(byteArray[1].ToString());
+
+                    Debug.WriteLine(value);
+
+                    timer.Restart();
+                }
+            }
         }
 
         private async void getValues()
@@ -72,7 +105,7 @@ namespace TestSensors_CollectData
             pressList.Add(sensorData.Pressure);
             pressText.Text = pressList.Last().ToString();
 
-            avgPressText.Text = avgOf(pressList);
+            //avgPressText.Text = avgOf(pressList);
 
 
         }
@@ -90,10 +123,17 @@ namespace TestSensors_CollectData
         private async void InitPressure()
         {
             _bmp180 = new Bmp180Sensor();
-            await _bmp180.InitializeAsync();            
+            await _bmp180.InitializeAsync();
+
+            var sensorData = await _bmp180.GetSensorDataAsync(Bmp180AccuracyMode.UltraLowPower);
+            //var temp = sensorData.Temperature.ToString("F1");
+            tempList.Add(sensorData.Temperature);
+            //var press = sensorData.Pressure.ToString("F2");
+            pressList.Add(sensorData.Pressure);
+            pressText.Text = pressList.Last().ToString();
         }
 
-        private async void InitADS()
+        private async Task InitADS()
         {
             var i2cSettings = new I2cConnectionSettings(0x48)
             {
@@ -104,10 +144,13 @@ namespace TestSensors_CollectData
             var i2C1 = I2cDevice.GetDeviceSelector("I2C1");
             var devices = await DeviceInformation.FindAllAsync(i2C1);
 
+            Debug.WriteLine(devices.Count);
+
             _converter0 = await I2cDevice.FromIdAsync(devices[0].Id, i2cSettings);
             //_converter1 = await I2cDevice.FromIdAsync(devices[0].Id, i2cSettings);
 
-            _converter0.Write(new byte[] { 0x01, 0xc4, 0xe0 });
+            //_converter0.Write(new byte[] { 0x01, 0xc4, 0xe0 });
+            _converter0.Write(new byte[] { 0x01, 0x84, 0xe0 });
             _converter0.Write(new byte[] { 0x02, 0x00, 0x00 });
             _converter0.Write(new byte[] { 0x03, 0xff, 0xff });
 
@@ -117,7 +160,20 @@ namespace TestSensors_CollectData
             
             _inGpioPin = gpio.OpenPin(27);
 
-            _inGpioPin.ValueChanged += InGpioPinOnValueChanged;
+            //_inGpioPin.ValueChanged += InGpioPinOnValueChanged;
+
+            var byteArray = new byte[2];
+
+            _converter0.WriteRead(new byte[] { 0x0 }, byteArray);
+
+            if (BitConverter.IsLittleEndian) { Array.Reverse(byteArray); }
+
+            var value = BitConverter.ToInt16(byteArray, 0);
+
+            Debug.WriteLine(byteArray[0].ToString());
+            Debug.WriteLine(byteArray[1].ToString());
+
+            Debug.WriteLine(value);
         }
 
         private async void InGpioPinOnValueChanged(GpioPin sender, GpioPinValueChangedEventArgs args)
@@ -131,7 +187,7 @@ namespace TestSensors_CollectData
 
             var value = BitConverter.ToInt16(byteArray, 0);
 
-            
+            flowText.Text = value.ToString();
         }
 
 

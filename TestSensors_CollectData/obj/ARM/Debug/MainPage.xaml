@@ -1,0 +1,42 @@
+﻿<Page
+    x:Class="TestSensors_CollectData.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:TestSensors_CollectData"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Button x:ConnectionId='2' x:Name="StartStopButton" Content="Start" VerticalAlignment="Center" HorizontalAlignment="Center"                              />
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
+                <TextBlock Text="Pressure:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock x:ConnectionId='8' x:Name="pressText" Text="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
+                <TextBlock Text="Current:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock x:ConnectionId='7' x:Name="currentText" Text="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
+                <TextBlock Text="Airflow:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock x:ConnectionId='6' x:Name="flowText" Text="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
+                <TextBlock Text="Avg. Pressure:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock x:ConnectionId='5' x:Name="avgPressText" Text="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
+                <TextBlock Text="Avg. Current:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock x:ConnectionId='4' x:Name="avgCurrentText" Text="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
+                <TextBlock Text="Avg. Airflow:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock x:ConnectionId='3' x:Name="avgFlowText" Text="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>
+

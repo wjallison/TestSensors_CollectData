@@ -1,0 +1,1 @@
+C:\Users\Caesar\Documents\GitHub\TestSensors_CollectData\TestSensors_CollectData\TestSensors_CollectData.csproj;arm
